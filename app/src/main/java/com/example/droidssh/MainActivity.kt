@@ -11,7 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.droidssh.ui.screens.connection.AddConnectionScreen
 import com.example.droidssh.ui.screens.connection.ConnectionListScreen
+import com.example.droidssh.ui.screens.key.KeyManagementScreen
+import com.example.droidssh.ui.screens.sftp.SftpScreen
 import com.example.droidssh.ui.screens.terminal.TerminalScreen
 import com.example.droidssh.ui.theme.DroidSSHTheme
 
@@ -36,13 +39,34 @@ fun AppNavigation() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "connection_list") {
         composable("connection_list") {
-            ConnectionListScreen(onConnect = { id ->
-                navController.navigate("terminal/$id")
-            })
+            ConnectionListScreen(
+                onConnect = { id ->
+                    navController.navigate("terminal/$id")
+                },
+                onNavigateToKeys = {
+                    navController.navigate("keys")
+                },
+                onAddConnection = {
+                    navController.navigate("add_connection")
+                }
+            )
+        }
+        composable("add_connection") {
+            AddConnectionScreen(onBack = { navController.popBackStack() })
+        }
+        composable("keys") {
+            KeyManagementScreen(onBack = { navController.popBackStack() })
         }
         composable("terminal/{connectionId}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("connectionId")?.toLong() ?: 0L
-            TerminalScreen(connectionId = id)
+            TerminalScreen(
+                connectionId = id,
+                onNavigateToSftp = { navController.navigate("sftp/$id") }
+            )
+        }
+        composable("sftp/{connectionId}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("connectionId")?.toLong() ?: 0L
+            SftpScreen(connectionId = id)
         }
     }
 }

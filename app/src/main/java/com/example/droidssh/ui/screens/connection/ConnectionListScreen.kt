@@ -4,6 +4,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Key
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -13,13 +16,39 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConnectionListScreen(onConnect: (Long) -> Unit) {
+fun ConnectionListScreen(
+    onConnect: (Long) -> Unit,
+    onNavigateToKeys: () -> Unit = {},
+    onAddConnection: () -> Unit = {}
+) {
     Scaffold(
         topBar = {
             LargeTopAppBar(title = { Text("会话管理") })
         },
+        bottomBar = {
+            NavigationBar {
+                NavigationBarItem(
+                    selected = true,
+                    onClick = { },
+                    icon = { Icon(Icons.Default.List, contentDescription = null) },
+                    label = { Text("列表") }
+                )
+                NavigationBarItem(
+                    selected = false,
+                    onClick = onNavigateToKeys,
+                    icon = { Icon(Icons.Default.Key, contentDescription = null) },
+                    label = { Text("密钥") }
+                )
+                NavigationBarItem(
+                    selected = false,
+                    onClick = { },
+                    icon = { Icon(Icons.Default.Settings, contentDescription = null) },
+                    label = { Text("设置") }
+                )
+            }
+        },
         floatingActionButton = {
-            FloatingActionButton(onClick = { /* TODO: Add connection */ }) {
+            FloatingActionButton(onClick = onAddConnection) {
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
         }
