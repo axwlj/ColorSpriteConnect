@@ -40,6 +40,8 @@ class TerminalViewModel @Inject constructor(private val sshManager: SshManager) 
         }
     }
 
+    private val MAX_LINES = 1000
+
     private fun startReading(inputStream: java.io.InputStream) {
         viewModelScope.launch(Dispatchers.IO) {
             val reader = BufferedReader(InputStreamReader(inputStream))
@@ -47,6 +49,9 @@ class TerminalViewModel @Inject constructor(private val sshManager: SshManager) 
             try {
                 while (reader.readLine().also { line = it } != null) {
                     withContext(Dispatchers.Main) {
+                        if (output.size >= MAX_LINES) {
+                            output.removeAt(0)
+                        }
                         output.add(line ?: "")
                     }
                 }

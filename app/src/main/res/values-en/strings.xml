@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">DroidSSH</string>
+    <string name="title_sessions">Sessions</string>
+    <string name="title_keys">Key Vault</string>
+    <string name="title_settings">Settings</string>
+    <string name="btn_add">Add Connection</string>
+</resources>
