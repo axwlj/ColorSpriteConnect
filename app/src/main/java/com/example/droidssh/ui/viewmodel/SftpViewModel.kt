@@ -3,13 +3,16 @@ package com.example.droidssh.ui.viewmodel
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import com.example.droidssh.domain.model.FileInfo
 import com.example.droidssh.service.ssh.SshManager
-import com.example.droidssh.ui.screens.sftp.FileInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SftpViewModel(private val sshManager: SshManager) : ViewModel() {
+@HiltViewModel
+class SftpViewModel @Inject constructor(private val sshManager: SshManager) : ViewModel() {
 
     val files = mutableStateListOf<FileInfo>()
     private var currentPath = "/"

@@ -1,5 +1,6 @@
 package com.example.droidssh.ui.screens.sftp
 
+import com.example.droidssh.domain.model.FileInfo
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -98,10 +99,3 @@ fun TransferProgressBar(fileName: String, progress: Float) {
         }
     }
 }
-
-data class FileInfo(
-    val name: String,
-    val isDirectory: Boolean,
-    val size: String,
-    val lastModified: String
-)

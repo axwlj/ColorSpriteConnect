@@ -17,7 +17,9 @@ import com.example.droidssh.ui.screens.key.KeyManagementScreen
 import com.example.droidssh.ui.screens.sftp.SftpScreen
 import com.example.droidssh.ui.screens.terminal.TerminalScreen
 import com.example.droidssh.ui.theme.DroidSSHTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

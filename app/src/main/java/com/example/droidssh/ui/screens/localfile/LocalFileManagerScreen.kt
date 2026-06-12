@@ -11,7 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.droidssh.ui.screens.sftp.FileInfo
+import com.example.droidssh.domain.model.FileInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
