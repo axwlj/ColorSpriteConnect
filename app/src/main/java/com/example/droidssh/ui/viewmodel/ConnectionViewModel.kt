@@ -4,12 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.droidssh.data.local.ConnectionDao
 import com.example.droidssh.domain.model.ServerConnection
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ConnectionViewModel(private val connectionDao: ConnectionDao) : ViewModel() {
+@HiltViewModel
+class ConnectionViewModel @Inject constructor(private val connectionDao: ConnectionDao) : ViewModel() {
 
     val connections: StateFlow<List<ServerConnection>> = connectionDao.getAllConnections()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())

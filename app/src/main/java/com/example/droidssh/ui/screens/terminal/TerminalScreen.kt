@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.droidssh.utils.AnsiParser
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,8 +53,8 @@ fun TerminalScreen(
         ) {
             items(terminalOutput) { line ->
                 Text(
-                    text = line,
-                    color = Color.Green,
+                    text = AnsiParser.parse(line),
+                    color = Color.White, // Default color for unparsed text
                     fontFamily = FontFamily.Monospace,
                     fontSize = 12.sp
                 )

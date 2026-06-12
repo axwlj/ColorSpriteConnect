@@ -46,4 +46,18 @@ class SftpViewModel(private val sshManager: SshManager) : ViewModel() {
         val newPath = if (currentPath == "/") "/$folderName" else "$currentPath/$folderName"
         loadFiles(newPath)
     }
+
+    fun downloadFile(fileName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val sftp = sshManager.getSftpClient()
+                if (sftp != null) {
+                    val remoteFile = if (currentPath == "/") "/$fileName" else "$currentPath/$fileName"
+                    // 实现下载逻辑，例如保存到内部存储
+                    // sftp.get(remoteFile, localPath)
+                    sftp.close()
+                }
+            } catch (e: Exception) { /* Log error */ }
+        }
+    }
 }

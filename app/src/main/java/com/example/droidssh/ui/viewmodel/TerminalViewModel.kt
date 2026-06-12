@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.droidssh.domain.model.ServerConnection
 import com.example.droidssh.service.ssh.SshManager
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,8 +13,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import javax.inject.Inject
 
-class TerminalViewModel(private val sshManager: SshManager) : ViewModel() {
+@HiltViewModel
+class TerminalViewModel @Inject constructor(private val sshManager: SshManager) : ViewModel() {
 
     private val _isConnected = MutableStateFlow(false)
     val isConnected: StateFlow<Boolean> = _isConnected
