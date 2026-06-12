@@ -1,7 +1,18 @@
-<svg width="108" height="108" viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="108" height="108" rx="24" fill="#6750A4"/>
-  <path d="M30 35H78V45H30V35Z" fill="white"/>
-  <path d="M30 48H55V58H30V48Z" fill="white" fill-opacity="0.8"/>
-  <path d="M30 61H70V71H30V61Z" fill="white" fill-opacity="0.6"/>
-  <path d="M72 55L82 65L72 75" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#6750A4"
+        android:pathData="M12,12h84v84h-84z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,35h48v10h-48z" />
+    <path
+        android:fillColor="#CCFFFFFF"
+        android:pathData="M30,48h25v10h-25z" />
+    <path
+        android:fillColor="#99FFFFFF"
+        android:pathData="M30,61h40v10h-40z" />
+</vector>
