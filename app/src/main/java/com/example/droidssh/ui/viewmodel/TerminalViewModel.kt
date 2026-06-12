@@ -5,9 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.droidssh.domain.model.ServerConnection
 import com.example.droidssh.service.ssh.SshManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 class TerminalViewModel(private val sshManager: SshManager) : ViewModel() {
 
@@ -15,23 +19,55 @@ class TerminalViewModel(private val sshManager: SshManager) : ViewModel() {
     val isConnected: StateFlow<Boolean> = _isConnected
 
     val output = mutableStateListOf<String>()
+    private var outputStream: java.io.OutputStream? = null
 
     fun connect(connection: ServerConnection) {
         viewModelScope.launch {
             try {
                 sshManager.connect(connection)
-                _isConnected.value = true
-                output.add("Connected to ${connection.host}")
-                // Start listening to input stream here
+                val streams = sshManager.getShell()
+                if (streams != null) {
+                    outputStream = streams.outputStream
+                    _isConnected.value = true
+                    startReading(streams.inputStream)
+                }
             } catch (e: Exception) {
                 output.add("Connection failed: ${e.message}")
             }
         }
     }
 
+    private fun startReading(inputStream: java.io.InputStream) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val reader = BufferedReader(InputStreamReader(inputStream))
+            var line: String?
+            try {
+                while (reader.readLine().also { line = it } != null) {
+                    withContext(Dispatchers.Main) {
+                        output.add(line ?: "")
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    output.add("Stream closed: ${e.message}")
+                }
+            }
+        }
+    }
+
     fun sendCommand(cmd: String) {
-        // Logic to write to SshManager output stream
-        output.add("ubuntu@prod:~$ $cmd")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                outputStream?.let {
+                    it.write((cmd + "\n").toByteArray())
+                    it.flush()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    output.add("Failed to send command: ${e.message}")
+                }
+            }
+        }
     }
 
     override fun onCleared() {

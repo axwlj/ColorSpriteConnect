@@ -66,8 +66,15 @@ fun ConnectionListScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConnectionItem(name: String, host: String, onClick: () -> Unit) {
+    SwipeToDismissBox(
+        state = rememberSwipeToDismissBoxState(),
+        backgroundContent = {
+            Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.errorContainer))
+        },
+        content = {
     ListItem(
         headlineContent = { Text(name) },
         supportingContent = { Text(host) },
@@ -77,5 +84,7 @@ fun ConnectionItem(name: String, host: String, onClick: () -> Unit) {
         modifier = Modifier.padding(8.dp),
         tonalElevation = 2.dp,
         shadowElevation = 2.dp
+    )
+        }
     )
 }
