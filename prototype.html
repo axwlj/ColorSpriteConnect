@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DroidSSH & SFTP 原型设计</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --m3-primary: #6750A4;
+            --m3-on-primary: #FFFFFF;
+            --m3-primary-container: #EADDFF;
+            --m3-on-primary-container: #21005D;
+            --m3-secondary: #625B71;
+            --m3-surface: #FEF7FF;
+            --m3-surface-variant: #E7E0EC;
+            --m3-outline: #79747E;
+            --m3-surface-container: #F3EDF7;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5;
+            padding: 40px;
+        }
+        .phone-mockup {
+            width: 360px;
+            height: 740px;
+            background: var(--m3-surface);
+            border: 12px solid #1a1c1e;
+            border-radius: 36px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .status-bar {
+            height: 32px;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .nav-bar {
+            height: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+        }
+        .nav-pill {
+            width: 64px;
+            height: 32px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-pill.active {
+            background-color: var(--m3-primary-container);
+            color: var(--m3-on-primary-container);
+        }
+        .terminal-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .fab {
+            position: absolute;
+            bottom: 80px;
+            right: 16px;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background-color: var(--m3-primary-container);
+            color: var(--m3-on-primary-container);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="mb-12">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">DroidSSH & SFTP Pro 原型展示</h1>
+        <p class="text-gray-600">基于 Material Design 3 设计的安卓 SSH/SFTP 客户端。本页面平铺展示了应用的核心功能界面。</p>
+    </div>
+
+    <div class="flex flex-wrap gap-12 justify-start">
+
+        <!-- 1. 连接管理 (Connection List) -->
+        <div class="flex flex-col items-center gap-4">
+            <span class="font-bold text-lg text-gray-700">1. 连接列表 (主页)</span>
+            <div class="phone-mockup">
+                <div class="status-bar">
+                    <span>12:30</span>
+                    <div class="flex gap-1">
+                        <i data-lucide="wifi" class="w-4 h-4"></i>
+                        <i data-lucide="battery" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <header class="px-4 py-4 flex items-center justify-between">
+                    <h2 class="text-2xl font-medium">会话管理</h2>
+                    <i data-lucide="search" class="w-6 h-6"></i>
+                </header>
+                <div class="flex-1 overflow-y-auto px-4">
+                    <div class="mb-6">
+                        <h3 class="text-sm font-medium text-purple-700 mb-2">最近连接</h3>
+                        <div class="bg-white rounded-2xl p-4 flex items-center gap-4 border border-gray-100 shadow-sm mb-3">
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i data-lucide="server" class="text-purple-700"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-medium text-gray-900">Web Server - Prod</div>
+                                <div class="text-sm text-gray-500">ubuntu@192.168.1.105:22</div>
+                            </div>
+                            <i data-lucide="more-vertical" class="text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 mb-2">所有服务器</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-4 p-2">
+                                <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="terminal" class="text-gray-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-medium">Home RaspberryPi</div>
+                                    <div class="text-sm text-gray-500">pi@raspberrypi.local</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 p-2">
+                                <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="database" class="text-gray-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-medium">Database Node</div>
+                                    <div class="text-sm text-gray-500">root@db.example.com</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="fab">
+                    <i data-lucide="plus"></i>
+                </div>
+                <div class="nav-bar bg-stone-100">
+                    <div class="nav-pill active"><i data-lucide="list"></i></div>
+                    <div class="nav-pill text-gray-500"><i data-lucide="key"></i></div>
+                    <div class="nav-pill text-gray-500"><i data-lucide="settings"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. SSH 终端 (SSH Terminal) -->
+        <div class="flex flex-col items-center gap-4">
+            <span class="font-bold text-lg text-gray-700">2. SSH 终端</span>
+            <div class="phone-mockup bg-black">
+                <div class="status-bar text-white">
+                    <span>12:35</span>
+                    <div class="flex gap-1">
+                        <i data-lucide="wifi" class="w-4 h-4"></i>
+                        <i data-lucide="battery" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <div class="bg-zinc-900 px-4 py-2 flex items-center justify-between text-white border-b border-zinc-800">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                        <span class="text-sm font-medium">Web Server - Prod</span>
+                    </div>
+                    <div class="flex gap-4">
+                        <i data-lucide="folder-sync" class="w-5 h-5 text-purple-400"></i>
+                        <i data-lucide="keyboard" class="w-5 h-5"></i>
+                        <i data-lucide="more-vertical" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="flex-1 terminal-font text-green-400 p-4 text-xs overflow-y-auto leading-relaxed">
+                    <div>Last login: Wed Oct 25 10:21:44 2023 from 10.0.0.5</div>
+                    <div class="text-white">ubuntu@prod-web:~$ <span class="animate-pulse">_</span></div>
+                    <div class="mt-4 text-blue-300"># System Load: 0.24, 0.15, 0.10</div>
+                    <div class="text-blue-300"># Memory Usage: 45%</div>
+                    <div class="mt-2 text-white">ubuntu@prod-web:~$ ls -la</div>
+                    <div class="text-gray-300">total 28</div>
+                    <div class="text-gray-300">drwxr-xr-x  4 ubuntu ubuntu 4096 Oct 25 09:12 .</div>
+                    <div class="text-gray-300">drwxr-xr-x  3 root   root   4096 Oct 20 14:05 ..</div>
+                    <div class="text-gray-300">-rw-------  1 ubuntu ubuntu  512 Oct 25 10:21 .bash_history</div>
+                    <div class="text-white">ubuntu@prod-web:~$ <span class="bg-white w-2 h-4 inline-block align-middle ml-1"></span></div>
+                </div>
+                <!-- 快捷指令栏 -->
+                <div class="bg-zinc-800 p-2 flex gap-2 overflow-x-auto whitespace-nowrap">
+                    <span class="px-3 py-1 bg-zinc-700 text-xs text-white rounded">top</span>
+                    <span class="px-3 py-1 bg-zinc-700 text-xs text-white rounded">tail -f log</span>
+                    <span class="px-3 py-1 bg-zinc-700 text-xs text-white rounded">systemctl restart nginx</span>
+                </div>
+                <!-- 虚拟功能键 -->
+                <div class="grid grid-cols-6 gap-px bg-zinc-700 border-t border-zinc-600">
+                    <div class="bg-zinc-900 text-white text-[10px] py-3 text-center border-r border-zinc-700">ESC</div>
+                    <div class="bg-zinc-900 text-white text-[10px] py-3 text-center border-r border-zinc-700">TAB</div>
+                    <div class="bg-zinc-900 text-white text-[10px] py-3 text-center border-r border-zinc-700">CTRL</div>
+                    <div class="bg-zinc-900 text-white text-[10px] py-3 text-center border-r border-zinc-700">ALT</div>
+                    <div class="bg-zinc-900 text-white text-[10px] py-3 text-center border-r border-zinc-700">FN</div>
+                    <div class="bg-zinc-900 text-white text-[10px] py-3 text-center border-zinc-700">PIPE</div>
+                </div>
+                <div class="nav-bar bg-black">
+                    <div class="flex gap-12">
+                        <i data-lucide="chevron-left" class="text-zinc-600"></i>
+                        <i data-lucide="chevron-up" class="text-zinc-600"></i>
+                        <i data-lucide="chevron-down" class="text-zinc-600"></i>
+                        <i data-lucide="chevron-right" class="text-zinc-600"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. SFTP 文件浏览器 (SFTP Browser) -->
+        <div class="flex flex-col items-center gap-4">
+            <span class="font-bold text-lg text-gray-700">3. SFTP 文件浏览</span>
+            <div class="phone-mockup">
+                <div class="status-bar">
+                    <span>12:40</span>
+                    <div class="flex gap-1"><i data-lucide="wifi" class="w-4 h-4"></i><i data-lucide="battery" class="w-4 h-4"></i></div>
+                </div>
+                <div class="px-4 py-2 border-b border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+                        <span class="font-medium">SFTP: Web Server</span>
+                    </div>
+                    <i data-lucide="arrow-left-right" class="w-5 h-5 text-purple-600"></i>
+                </div>
+                <div class="flex bg-gray-50 p-1 mx-4 my-2 rounded-lg">
+                    <button class="flex-1 py-1 text-xs font-medium bg-white shadow-sm rounded-md">远程</button>
+                    <button class="flex-1 py-1 text-xs font-medium text-gray-500">本地</button>
+                </div>
+                <div class="px-4 py-1 text-xs text-gray-500 bg-gray-100 flex items-center gap-1">
+                    <i data-lucide="folder" class="w-3 h-3"></i> /var/www/html/project
+                </div>
+                <div class="flex-1 overflow-y-auto">
+                    <div class="divide-y divide-gray-50">
+                        <div class="p-4 flex items-center gap-3">
+                            <i data-lucide="folder" class="text-amber-500 w-6 h-6"></i>
+                            <div class="flex-1">
+                                <div class="text-sm font-medium">assets</div>
+                                <div class="text-[10px] text-gray-400">4096 bytes • 2023-10-20</div>
+                            </div>
+                        </div>
+                        <div class="p-4 flex items-center gap-3">
+                            <i data-lucide="file-code" class="text-blue-500 w-6 h-6"></i>
+                            <div class="flex-1">
+                                <div class="text-sm font-medium">index.php</div>
+                                <div class="text-[10px] text-gray-400">12.5 KB • 2023-10-25</div>
+                            </div>
+                        </div>
+                        <div class="p-4 flex items-center gap-3">
+                            <i data-lucide="file-text" class="text-gray-500 w-6 h-6"></i>
+                            <div class="flex-1">
+                                <div class="text-sm font-medium">config.json</div>
+                                <div class="text-[10px] text-gray-400">1.2 KB • 2023-10-24</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 传输进度条 -->
+                <div class="bg-purple-50 p-3 border-t border-purple-100">
+                    <div class="flex justify-between text-[10px] mb-1">
+                        <span class="font-medium text-purple-900">正在上传: bundle.js.map</span>
+                        <span class="text-purple-700">75%</span>
+                    </div>
+                    <div class="w-full bg-purple-200 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-purple-600 h-full w-3/4"></div>
+                    </div>
+                </div>
+                <div class="fab !bottom-24 !bg-purple-600 !text-white">
+                    <i data-lucide="upload"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. 密钥管理 (Key Management) -->
+        <div class="flex flex-col items-center gap-4">
+            <span class="font-bold text-lg text-gray-700">4. 密钥管理</span>
+            <div class="phone-mockup">
+                <div class="status-bar">
+                    <span>12:45</span>
+                    <div class="flex gap-1"><i data-lucide="wifi" class="w-4 h-4"></i><i data-lucide="battery" class="w-4 h-4"></i></div>
+                </div>
+                <header class="px-6 py-4">
+                    <div class="flex items-center gap-4 mb-4">
+                        <i data-lucide="arrow-left" class="w-6 h-6"></i>
+                        <h2 class="text-xl font-medium">密钥库</h2>
+                    </div>
+                    <div class="bg-purple-100 p-4 rounded-2xl flex items-start gap-3">
+                        <i data-lucide="shield-check" class="text-purple-700 w-5 h-5 mt-0.5"></i>
+                        <div>
+                            <div class="text-sm font-medium text-purple-900">安全存储已启用</div>
+                            <div class="text-[11px] text-purple-700">所有私钥均通过 Android Keystore 硬件级加密保护。</div>
+                        </div>
+                    </div>
+                </header>
+                <div class="px-6 space-y-4">
+                    <div class="p-4 border border-gray-200 rounded-xl relative">
+                        <div class="text-xs text-gray-400 mb-1">RSA 4096</div>
+                        <div class="font-medium text-gray-800">id_rsa_work_macbook</div>
+                        <div class="text-[10px] text-gray-500 mt-2 font-mono truncate">SHA256:7uX9...9jLw</div>
+                        <i data-lucide="check-circle-2" class="absolute top-4 right-4 w-4 h-4 text-green-500"></i>
+                    </div>
+                    <div class="p-4 border border-gray-200 rounded-xl">
+                        <div class="text-xs text-gray-400 mb-1">ED25519</div>
+                        <div class="font-medium text-gray-800">personal_vps_key</div>
+                        <div class="text-[10px] text-gray-500 mt-2 font-mono truncate">SHA256:v8K2...mM4q</div>
+                    </div>
+                    <button class="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 text-sm font-medium flex items-center justify-center gap-2">
+                        <i data-lucide="import" class="w-4 h-4"></i> 导入已有密钥
+                    </button>
+                </div>
+                <div class="fab">
+                    <i data-lucide="plus"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. 端口转发 & 任务切换 (Tunnel & Multi-task) -->
+        <div class="flex flex-col items-center gap-4">
+            <span class="font-bold text-lg text-gray-700">5. 端口转发 & 多任务</span>
+            <div class="phone-mockup">
+                <div class="status-bar">
+                    <span>12:50</span>
+                    <div class="flex gap-1"><i data-lucide="wifi" class="w-4 h-4"></i><i data-lucide="battery" class="w-4 h-4"></i></div>
+                </div>
+                <div class="px-4 py-4">
+                    <h2 class="text-xl font-medium mb-4">当前运行的任务</h2>
+
+                    <div class="mb-6">
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">活跃会话</h3>
+                        <div class="flex gap-4 overflow-x-auto pb-2">
+                            <div class="w-40 h-56 bg-zinc-900 rounded-xl flex-shrink-0 p-2 relative shadow-lg">
+                                <div class="text-[8px] text-green-500 terminal-font truncate">ubuntu@prod:~$ top</div>
+                                <div class="mt-2 text-[6px] text-gray-400 terminal-font leading-tight">
+                                    PID USER PR NI VIRT RES SHR S %CPU %MEM<br>
+                                    123 root 20 0 1.2g 45m 12m S 0.5 1.2
+                                </div>
+                                <div class="absolute bottom-2 left-2 right-2 flex justify-between items-center">
+                                    <span class="text-[8px] text-white">Terminal (Prod)</span>
+                                    <i data-lucide="maximize-2" class="w-3 h-3 text-white"></i>
+                                </div>
+                            </div>
+                            <div class="w-40 h-56 bg-gray-100 rounded-xl flex-shrink-0 p-2 relative shadow-md border border-gray-200">
+                                <div class="flex flex-col gap-1">
+                                    <div class="w-full h-1 bg-gray-200 rounded"></div>
+                                    <div class="w-3/4 h-1 bg-gray-200 rounded"></div>
+                                </div>
+                                <div class="mt-4 flex items-center justify-center">
+                                    <i data-lucide="folder-sync" class="w-8 h-8 text-purple-300"></i>
+                                </div>
+                                <div class="absolute bottom-2 left-2 right-2 flex justify-between items-center">
+                                    <span class="text-[8px] text-gray-600">SFTP (Dev)</span>
+                                    <i data-lucide="maximize-2" class="w-3 h-3 text-gray-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">端口转发 (SSH Tunnel)</h3>
+                        <div class="space-y-3">
+                            <div class="bg-green-50 p-3 rounded-xl border border-green-100 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                    <div>
+                                        <div class="text-xs font-medium text-green-900">Local: 8080 → Remote: 80</div>
+                                        <div class="text-[10px] text-green-700">Session: Web Server - Prod</div>
+                                    </div>
+                                </div>
+                                <div class="px-2 py-1 bg-white rounded text-[10px] font-bold text-green-600">活跃</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-xl border border-gray-100 flex items-center justify-between opacity-60">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
+                                    <div>
+                                        <div class="text-xs font-medium text-gray-900">Local: 3306 → Remote: 3306</div>
+                                        <div class="text-[10px] text-gray-600">Session: Database Node</div>
+                                    </div>
+                                </div>
+                                <i data-lucide="play" class="w-4 h-4 text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-bar bg-stone-100 mt-auto">
+                    <div class="nav-pill text-gray-500"><i data-lucide="list"></i></div>
+                    <div class="nav-pill active"><i data-lucide="layers"></i></div>
+                    <div class="nav-pill text-gray-500"><i data-lucide="settings"></i></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
