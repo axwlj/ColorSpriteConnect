@@ -25,13 +25,15 @@ import com.example.droidssh.utils.AnsiParser
 @Composable
 fun TerminalScreen(
     connectionId: Long,
-    onNavigateToSftp: () -> Unit = {}
+    onNavigateToSftp: () -> Unit = {},
+    isSplit: Boolean = false
 ) {
     var command by remember { mutableStateOf("") }
     val terminalOutput = remember { mutableStateListOf("Last login: Wed Oct 25 10:21:44 2023", "ubuntu@prod:~$ ") }
 
     Scaffold(
         topBar = {
+            if (!isSplit) {
             TopAppBar(
                 title = { Text("Web Server - Prod", fontSize = 16.sp) },
                 actions = {
@@ -44,6 +46,7 @@ fun TerminalScreen(
                     titleContentColor = Color.White
                 )
             )
+            }
         }
     ) { padding ->
     Column(modifier = Modifier
