@@ -14,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -45,7 +46,17 @@ fun TerminalScreen(
             )
         }
     ) { padding ->
-    Column(modifier = Modifier.fillMaxSize().padding(padding).background(Color.Black)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(padding)
+        .background(Color.Black)
+        .onKeyEvent { event ->
+            if (event.type == KeyEventType.KeyDown && event.key == Key.Enter) {
+                // 处理物理回车键
+                true
+            } else false
+        }
+    ) {
         // Output Area
         LazyColumn(
             modifier = Modifier.weight(1f).padding(8.dp),

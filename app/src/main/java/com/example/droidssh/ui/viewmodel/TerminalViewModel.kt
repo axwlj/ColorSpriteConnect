@@ -48,6 +48,13 @@ class TerminalViewModel @Inject constructor(private val sshManager: SshManager) 
             var line: String?
             try {
                 while (reader.readLine().also { line = it } != null) {
+                    // 检测 Zmodem 握手信号 (rz/sz)
+                    if (line?.contains("ZRQINIT") == true || line?.contains("rz waiting") == true) {
+                        withContext(Dispatchers.Main) {
+                            output.add("检测到 Zmodem 传输请求...")
+                        }
+                    }
+
                     withContext(Dispatchers.Main) {
                         if (output.size >= MAX_LINES) {
                             output.removeAt(0)
