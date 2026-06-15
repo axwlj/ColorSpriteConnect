@@ -17,10 +17,12 @@ class SftpViewModel @Inject constructor(private val sshManager: SshManager) : Vi
     val files = mutableStateListOf<FileInfo>()
     private var currentPath = "/"
 
+    var connectionId: Long = 0
+
     fun loadFiles(path: String = currentPath) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val sftp = sshManager.getSftpClient()
+                val sftp = sshManager.getSftpClient(connectionId)
                 if (sftp != null) {
                     val remoteFiles = sftp.ls(path)
                     withContext(Dispatchers.Main) {
@@ -53,7 +55,7 @@ class SftpViewModel @Inject constructor(private val sshManager: SshManager) : Vi
     fun downloadFile(fileName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val sftp = sshManager.getSftpClient()
+                val sftp = sshManager.getSftpClient(connectionId)
                 if (sftp != null) {
                     val remoteFile = if (currentPath == "/") "/$fileName" else "$currentPath/$fileName"
                     // 实现下载逻辑，例如保存到内部存储

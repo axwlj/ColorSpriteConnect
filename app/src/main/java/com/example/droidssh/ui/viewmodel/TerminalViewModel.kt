@@ -25,10 +25,11 @@ class TerminalViewModel @Inject constructor(private val sshManager: SshManager) 
     private var outputStream: java.io.OutputStream? = null
 
     fun connect(connection: ServerConnection) {
+        currentId = connection.id
         viewModelScope.launch {
             try {
                 sshManager.connect(connection)
-                val streams = sshManager.getShell()
+                val streams = sshManager.getShell(connection.id)
                 if (streams != null) {
                     outputStream = streams.outputStream
                     _isConnected.value = true
