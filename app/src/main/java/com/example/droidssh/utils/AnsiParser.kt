@@ -40,7 +40,10 @@ object AnsiParser {
         val codes = params.split(";")
         codes.forEach { code ->
             when {
-                code == "0" || code == "" -> { /* Reset style logic */ }
+                code == "0" || code == "" -> {
+                    // 在本简易实现中，我们通过结束所有当前的 SpanStyle 来模拟 Reset
+                    // 实际复杂解析器需要维护栈，此处仅做占位演示
+                }
                 code == "1" -> pushStyle(SpanStyle(fontWeight = FontWeight.Bold))
                 ANSI_COLOR_MAP.containsKey(code) -> {
                     ANSI_COLOR_MAP[code]?.let { pushStyle(SpanStyle(color = it)) }

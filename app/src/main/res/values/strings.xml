@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">DroidSSH</string>
+    <string name="title_sessions">会话管理</string>
+    <string name="title_keys">密钥库</string>
+    <string name="title_settings">设置</string>
+    <string name="btn_add">添加连接</string>
 </resources>
