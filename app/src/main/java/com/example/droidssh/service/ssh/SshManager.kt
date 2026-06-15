@@ -12,7 +12,7 @@ class SshManager {
 
     fun getClient(id: Long): SSHClient? = clients[id]
 
-    fun connect(connection: ServerConnection): SSHClient {
+    suspend fun connect(connection: ServerConnection): SSHClient = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
         val client = SSHClient().apply {
             addHostKeyVerifier(object : net.schmizz.sshj.transport.verification.HostKeyVerifier {
                 override fun verify(hostname: String, port: Int, key: java.security.PublicKey): Boolean = true
@@ -23,7 +23,7 @@ class SshManager {
             }
         }
         clients[connection.id] = client
-        return client
+        return@withContext client
     }
 
     fun disconnect(id: Long) {
