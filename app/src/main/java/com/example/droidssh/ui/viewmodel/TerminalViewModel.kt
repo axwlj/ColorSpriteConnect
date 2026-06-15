@@ -85,10 +85,12 @@ class TerminalViewModel @Inject constructor(private val sshManager: SshManager) 
         }
     }
 
+    private var currentId: Long? = null
+
     override fun onCleared() {
         super.onCleared()
         viewModelScope.launch {
-            sshManager.disconnect()
+            currentId?.let { sshManager.disconnect(it) }
         }
     }
 }

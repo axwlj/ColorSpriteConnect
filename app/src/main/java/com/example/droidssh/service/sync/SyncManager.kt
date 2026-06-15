@@ -10,7 +10,7 @@ class SyncManager {
     // 使用用户主密码加密配置
     fun encryptConfig(connections: List<ServerConnection>, masterKey: String): String {
         val key = SecretKeySpec(masterKey.padEnd(32).substring(0, 32).toByteArray(), "AES")
-        val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
         cipher.init(Cipher.ENCRYPT_MODE, key)
         val plainText = connections.toString() // 实际应使用 JSON 序列化
         return Base64.encodeToString(cipher.doFinal(plainText.toByteArray()), Base64.DEFAULT)

@@ -2,6 +2,9 @@ package com.example.droidssh.service.ssh
 
 import com.example.droidssh.domain.model.ServerConnection
 import net.schmizz.sshj.SSHClient
+import net.schmizz.sshj.sftp.SFTPClient
+import java.io.InputStream
+import java.io.OutputStream
 import java.util.concurrent.ConcurrentHashMap
 
 class SshManager {
@@ -29,4 +32,21 @@ class SshManager {
     }
 
     fun isConnected(id: Long): Boolean = clients[id]?.isConnected ?: false
+
+    fun getShell(id: Long): ShellStreams? {
+        val client = clients[id] ?: return null
+        val session = client.startSession()
+        session.allocateDefaultPTY()
+        val shell = session.startShell()
+        return ShellStreams(shell.inputStream, shell.outputStream)
+    }
+
+    fun getSftpClient(id: Long): SFTPClient? {
+        return clients[id]?.newSFTPClient()
+    }
 }
+
+data class ShellStreams(
+    val inputStream: InputStream,
+    val outputStream: OutputStream
+)
