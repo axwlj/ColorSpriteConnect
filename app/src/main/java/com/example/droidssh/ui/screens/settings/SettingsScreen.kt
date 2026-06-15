@@ -2,7 +2,7 @@ package com.example.droidssh.ui.screens.settings
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.FontDownload
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Security
@@ -20,7 +20,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                 title = { Text("设置") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -45,7 +45,9 @@ fun SettingSection(title: String, content: @Composable ColumnScope.() -> Unit) {
         Text(title, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
         Spacer(modifier = Modifier.height(8.dp))
         Card(modifier = Modifier.fillMaxWidth()) {
-            Column(content = content) { }
+            Column {
+                content()
+            }
         }
     }
 }

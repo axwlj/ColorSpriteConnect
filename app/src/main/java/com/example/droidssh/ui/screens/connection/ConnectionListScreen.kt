@@ -1,11 +1,12 @@
 package com.example.droidssh.ui.screens.connection
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Key
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material3.*
@@ -32,7 +33,7 @@ fun ConnectionListScreen(
                 NavigationBarItem(
                     selected = true,
                     onClick = { },
-                    icon = { Icon(Icons.Default.List, contentDescription = null) },
+                    icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
                     label = { Text("列表") }
                 )
                 NavigationBarItem(
@@ -74,22 +75,22 @@ fun ConnectionListScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConnectionItem(name: String, host: String, onClick: () -> Unit) {
+    val dismissState = rememberSwipeToDismissBoxState()
     SwipeToDismissBox(
-        state = rememberSwipeToDismissBoxState(),
+        state = dismissState,
         backgroundContent = {
             Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.errorContainer))
-        },
-        content = {
-    ListItem(
-        headlineContent = { Text(name) },
-        supportingContent = { Text(host) },
-        leadingContent = {
-            Icon(Icons.Default.Storage, contentDescription = null)
-        },
-        modifier = Modifier.padding(8.dp),
-        tonalElevation = 2.dp,
-        shadowElevation = 2.dp
-    )
         }
-    )
+    ) {
+        ListItem(
+            headlineContent = { Text(name) },
+            supportingContent = { Text(host) },
+            leadingContent = {
+                Icon(Icons.Default.Storage, contentDescription = null)
+            },
+            modifier = Modifier.padding(8.dp),
+            tonalElevation = 2.dp,
+            shadowElevation = 2.dp
+        )
+    }
 }

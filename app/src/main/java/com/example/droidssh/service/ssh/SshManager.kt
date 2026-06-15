@@ -16,6 +16,7 @@ class SshManager {
         val client = SSHClient().apply {
             addHostKeyVerifier(object : net.schmizz.sshj.transport.verification.HostKeyVerifier {
                 override fun verify(hostname: String, port: Int, key: java.security.PublicKey): Boolean = true
+                override fun findExistingAlgorithms(hostname: String, port: Int): List<String> = emptyList()
             })
             connect(connection.host, connection.port)
             if (connection.password != null) {

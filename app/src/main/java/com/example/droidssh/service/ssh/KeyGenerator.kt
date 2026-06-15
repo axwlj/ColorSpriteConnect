@@ -1,7 +1,6 @@
 package com.example.droidssh.service.ssh
 
 import net.schmizz.sshj.common.KeyType
-import net.schmizz.sshj.userauth.keypair.KeyPairWrapper
 import java.security.KeyPairGenerator
 import java.security.SecureRandom
 
