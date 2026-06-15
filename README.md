@@ -31,6 +31,11 @@ DroidSSH & SFTP Pro 是一款基于现代 Material Design 3 (Material You) 设�
 2. 打开 Android Studio，选择 `Open` 并定位到项目根目录。
 3. 等待 Gradle 同步完成（需联网下载依赖库）。
 
+> **注意 (常见问题)**: 如果您在中国大陆地区遇到 `Remote host terminated the handshake` 或 TLS 相关下载错误，本项目已在 `build.gradle` 中预置了阿里云镜像。如果问题依然存在，请检查您的代理设置或在 `gradle.properties` 中添加：
+> ```properties
+> systemProp.https.protocols=TLSv1.2,TLSv1.3
+> ```
+
 ## 📦 打包与发布流程
 
 ### 1. 生成调试包 (Debug APK)
